@@ -1,6 +1,9 @@
-# SIMON Outline
+# SIMON Clone
 
-Recreation of the classic Simon game, using HTML, Typescript, and CSS.
+![Simon Wireframe](simon-wireframe.png)
+*Wireframe Draft*
+
+Re-creation of the classic Simon game, using HTML, Typescript, and CSS.
 
 A live build will be hosted and available here once it has been released.
 
@@ -10,21 +13,21 @@ With NodeJS installed on your machine, run `npm init`, and `npm run start`.
 All deliverables should then be available in `dist/`.
 
 ## Goals
-
-- Leverage MVC code from earlier project
-- Create nice front-end design
-- Learn/Use Web Audio API
+- Create simple, but nice front-end design
+- Learn/Use Web Audio API, fallback to `<audio>`
 
 
 ## MVP
 - 4 Buttons
 - Game Loop:
-  - Computer plays sequence, buttons light up, plays sound
-  - Sound plays on button presses during player turn and lights up
-  - Limited time to get button, when passed, or if player hits wrong button, lose
-  - Show score
+  - Game plays a sequence of buttons one at a time, one added each turn
+    - button lights up
+    - play unique sound per button
+  - Player must press buttons in the same order once sequence has finished
+    - Limit the time to get button
+  - If player runs out of time or presses the wrong button, show score
 
-## Game Scenes
+## Game States
 
 ### 1. Standby
 Wait for user interaction. 
@@ -68,7 +71,7 @@ If this button is pressed, go to state *2. GamePlay*
 
 ### State
 - turnNumber
-- playerProgression
+- playerProgress
 - speed
   - Calculated via turnNumber
 - gameState
@@ -81,10 +84,9 @@ Set only once at the beginning of each game.
 - Button tones sfx files perhaps pitch shifted
 - Randomized sequence
 
-### Nice to Have (Ice Box) Features
+### "Nice to Haves"
 
-- Use Web Audio API to dynamically generate waves
+- Difficulty mode (speed inclines quicker)
+- Diversify tones in different keys (player must adjust to new tones every time)
 - Music on the standby screen & result screen
-- Difficulty mode
 - Add more buttons
-- Diversify tones in different keys
