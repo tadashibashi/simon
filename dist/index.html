@@ -2,7 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Simon</title>
+
+    <!--  Font Awesome  -->
+    <script src="https://kit.fontawesome.com/a8d80231ea.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="./css/styles.css" />
 </head>
 <body>
     <div id="simon">
@@ -14,8 +19,13 @@
         </div>
 
         <div class="display">
-            <button>Restart</button>
+<!-- fa-volume-high, fa-volume-low, fa-volume-off -->
+            <label for="volume"><i class="fa-solid fa-volume-high"></i>
+                <input id="volume" type="range" />
+            </label>
         </div>
     </div>
+
+    <script src="main.js"></script>
 </body>
 </html>

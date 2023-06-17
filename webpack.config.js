@@ -13,6 +13,11 @@ const config = {
     devServer: {
         open: true,
         host: 'localhost',
+        liveReload: true,
+        static: {
+            directory: path.join(__dirname, 'dist'),
+        },
+
     },
     plugins: [
         // Add your plugins here
