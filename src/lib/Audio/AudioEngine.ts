@@ -1,20 +1,16 @@
-// Controls the creation of web audio contexts
-import {Bus} from "./Bus";
+import {BusMgr} from "./BusMgr";
+import {interactionWorkaround} from "./Interaction";
 
 export class AudioEngine {
-    private mContext: AudioContext | null;
-    private mMasterBus: Bus;
-    private mBusses: Map<string, Bus>;
+    private mContext: AudioContext;
+    private mBusses: BusMgr;
 
-    get context(): AudioContext {
-        return this.mContext;
-    }
+    get busses(): BusMgr { return this.mBusses; }
+    get context(): AudioContext { return this.mContext; }
 
     constructor() {
         this.mContext = null;
-        this.interactionWorkaround = this.interactionWorkaround.bind(this);
-        this.mMasterBus = new Bus(this.mContext);
-        this.mBusses = new Map;
+        this.mBusses = null;
     }
 
     wasInit(): boolean {
@@ -31,23 +27,11 @@ export class AudioEngine {
             return false;
         }
 
-        // Set-up audio interaction workaround
-        window.addEventListener("pointerdown", this.interactionWorkaround);
+        interactionWorkaround(context);
 
+        this.mBusses = new BusMgr(context);
         this.mContext = context;
         return true;
     }
 
-    // Handler for audio interaction workaround. On most major browsers, audio context
-    // must be resumed or created once the user interacts with the page.
-    private interactionWorkaround() {
-        this.context.resume()
-            .then(() => {
-                console.log("Resumed AudioContext.");
-                window.removeEventListener("pointerdown", this.interactionWorkaround);
-            })
-            .catch(err => {
-                console.log("Failed to resume AudioContext:", err);
-            });
-    }
 }

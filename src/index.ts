@@ -8,7 +8,7 @@ window.addEventListener("load", async () => {
 
     const audio = new AudioEngine;
 
-    audio.init();
+    //audio.init();
 
     const sounds: Map<string, AudioBuffer> = new Map;
 
@@ -37,10 +37,10 @@ window.addEventListener("load", async () => {
         return Promise.all(promises);
     }
 
-    let bufs: {buffer: AudioBuffer, url: string}[] = null;
-    await preloadSounds("bop.wav").then(val => {
-        bufs = val;
-    });
+    // let bufs: {buffer: AudioBuffer, url: string}[] = null;
+    // await preloadSounds("bop.wav").then(val => {
+    //     bufs = val;
+    // });
 
 
     function playSound(buf: AudioBuffer) {
@@ -51,10 +51,10 @@ window.addEventListener("load", async () => {
         return src;
     }
 
-    document.querySelector("#volume").addEventListener("click", () => {
-        const buf = bufs[0].buffer;
-        playSound(buf);
-    });
+    // document.querySelector("#volume").addEventListener("click", () => {
+    //     const buf = bufs[0].buffer;
+    //     playSound(buf);
+    // });
 
 });
 
