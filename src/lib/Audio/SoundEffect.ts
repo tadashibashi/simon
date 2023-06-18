@@ -1,9 +1,13 @@
 // Class intended for short one-shot sound effects.
 // If you need longer audio with more controls for music or ambience, please use the `Music` class.
+import {Delegate} from "../Delegate";
+
 export class SoundEffect {
     private readonly context: AudioContext;
     private readonly defaults: AudioBufferSourceOptions;
     private readonly target: AudioNode;
+
+    onended: Delegate<[AudioBufferSourceNode, SoundEffect]>;
 
     constructor(context: AudioContext, target: AudioNode) {
         this.context = context;
@@ -15,6 +19,9 @@ export class SoundEffect {
             loopStart: 0,
             loopEnd: 0
         };
+
+        this.onended = new Delegate<[AudioBufferSourceNode, SoundEffect]>;
+        this.onendedHandler = this.onendedHandler.bind(this);
     }
 
     get isLoaded() { return this.defaults.buffer !== null; }
@@ -45,6 +52,10 @@ export class SoundEffect {
             });
     }
 
+    private onendedHandler(evt: Event) {
+        this.onended.invoke(evt.target as AudioBufferSourceNode, this);
+    }
+
     unload() { this.defaults.buffer = null; }
 
     /**
@@ -58,6 +69,7 @@ export class SoundEffect {
             new AudioBufferSourceNode(this.context,this.defaults) :
             new AudioBufferSourceNode(this.context);
         srcNode.connect(this.target);
+        srcNode.onended = this.onendedHandler;
         srcNode.start(this.context.currentTime + when, offset, duration);
 
         return srcNode;
