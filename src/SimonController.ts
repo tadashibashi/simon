@@ -13,6 +13,10 @@ export class SimonController extends Controller<SimonModel> {
         // load audio
         const audio = m.props.audio;
         audio.init();
+
+        const oscs: OscillatorNode[] = [];
+
+
         const osc = m.props.audio.context.createOscillator();
         const gain = audio.context.createGain();
         gain.gain.value = 0;
@@ -25,8 +29,8 @@ export class SimonController extends Controller<SimonModel> {
         m.props.buttons.addEventListener("click", () => {
             osc.frequency.value = 440;
             osc.frequency.linearRampToValueAtTime(880, audio.context.currentTime + 1);
-            gain.gain.value = 1;
-            gain.gain.linearRampToValueAtTime(0, audio.context.currentTime+1);
+            gain.gain.linearRampToValueAtTime(1, audio.context.currentTime + .5);
+            gain.gain.linearRampToValueAtTime(0, audio.context.currentTime + 1);
         });
     }
 }

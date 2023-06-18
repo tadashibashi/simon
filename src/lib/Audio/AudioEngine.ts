@@ -1,6 +1,10 @@
 // Controls the creation of web audio contexts
+import {Bus} from "./Bus";
+
 export class AudioEngine {
     private mContext: AudioContext | null;
+    private mMasterBus: Bus;
+    private mBusses: Map<string, Bus>;
 
     get context(): AudioContext {
         return this.mContext;
@@ -9,6 +13,8 @@ export class AudioEngine {
     constructor() {
         this.mContext = null;
         this.interactionWorkaround = this.interactionWorkaround.bind(this);
+        this.mMasterBus = new Bus(this.mContext);
+        this.mBusses = new Map;
     }
 
     wasInit(): boolean {

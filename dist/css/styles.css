@@ -3,12 +3,18 @@
 }
 
 #simon > .buttons {
+  margin: 0 auto;
+  width: 50vmin;
+  height: 50vmin;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
 
 }
 
 #simon > .buttons > div {
-  width: 100px;
-  height: 100px;
+  width: 100%;
+  height: 100%;
   border: 1px solid black;
 }
 

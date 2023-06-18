@@ -1,4 +1,4 @@
-import { AudioEngine } from "./lib/AudioEngine"
+import { AudioEngine } from "./lib/Audio/AudioEngine"
 import {Simon} from "./Simon";
 
 const volumeEl = document.querySelector("#volume");
@@ -12,7 +12,7 @@ window.addEventListener("load", async () => {
 
     const sounds: Map<string, AudioBuffer> = new Map;
 
-    async function loadSound(url: string): Promise<AudioBuffer> {
+    async function loadSound(url: string): Promise<{buffer: AudioBuffer, url: string}> {
         return new Promise((resolve, reject) => {
             const req = new XMLHttpRequest();
             req.open("GET", url, true);
@@ -21,7 +21,7 @@ window.addEventListener("load", async () => {
             req.onload = () => {
                 audio.context.decodeAudioData(req.response,
                     buf => {
-                        resolve(buf);
+                        resolve({buffer: buf, url});
                     }, err => {
                         reject(err);
                     });
@@ -31,18 +31,13 @@ window.addEventListener("load", async () => {
         });
     }
 
-    async function loadSoundSync(url: string) {
-        const res = await fetch(url);
-        const buf = await res.arrayBuffer();
-        return await audio.context.decodeAudioData(buf);
-    }
 
     async function preloadSounds(...urls: string[]) {
         const promises = urls.map(url => loadSound(url));
         return Promise.all(promises);
     }
 
-    let bufs: AudioBuffer[] = null;
+    let bufs: {buffer: AudioBuffer, url: string}[] = null;
     await preloadSounds("bop.wav").then(val => {
         bufs = val;
     });
@@ -57,7 +52,7 @@ window.addEventListener("load", async () => {
     }
 
     document.querySelector("#volume").addEventListener("click", () => {
-        const buf = bufs[0];
+        const buf = bufs[0].buffer;
         playSound(buf);
     });
 

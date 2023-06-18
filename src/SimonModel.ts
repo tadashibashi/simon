@@ -1,5 +1,5 @@
 import {Model} from "./lib/Model";
-import {AudioEngine} from "./lib/AudioEngine";
+import {AudioEngine} from "./lib/Audio/AudioEngine";
 
 export enum GameState {
     // Play button with grayed-out screen.
