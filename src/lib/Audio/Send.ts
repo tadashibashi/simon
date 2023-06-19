@@ -2,7 +2,7 @@
 // other audio inputs. These are usually sent to other buses or effects.
 
 export class Send {
-    private mNode: GainNode;
+    private readonly mNode: GainNode;
     private mTarget: AudioNode;
 
     get gain() {

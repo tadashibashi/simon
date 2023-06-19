@@ -21,22 +21,34 @@ export class SendMgr {
         return newSend;
     }
 
-    get(idxOrTarget: number | AudioNode) {
+    /**
+     * Get a Send previously created on this send manager
+     * @param idxOrTarget if index, it must be a value between 0 and SendMgr#length. If an AudioNode target,
+     * it will return the first Send that is targeting the AudioNode. If none exists, null is returned.
+     */
+    get(idxOrTarget: number | AudioNode): Send | null {
         return (typeof idxOrTarget === "number") ?
-            this.mSends[idxOrTarget] :
-            this.mSends.find(send => Object.is(send.target, idxOrTarget));
+            this.mSends[idxOrTarget] || null :
+            this.mSends.find(send => Object.is(send.target, idxOrTarget)) || null;
     }
 
+
     /**
-     * Removes send at index
-     * @param index
+     * Remove a send belonging to this SendMgr, cached by the user.
+     * @param send
+     * @returns true: if send was successfully removed;
+     * false: if it did not exist in the container.
      */
-    removeAt(index: number) {
-        const send = this.mSends[index];
-        if (send) {
-            this.cleanSend(send);
-            this.mSends.splice(index, 1);
+    remove(send: Send) {
+        for (let i = 0; i < this.mSends.length; ++i) {
+            if (Object.is(this.mSends[i], send)) {
+                this.cleanSend(send);
+                this.mSends.splice(i, 1);
+                return true;
+            }
         }
+
+        return false;
     }
 
     /**
@@ -47,12 +59,15 @@ export class SendMgr {
         this.mSends = [];
     }
 
+    /**
+     * Call when "destructing" the SendMgr
+     */
     dispose() {
         this.removeAll();
     }
 
     /**
-     * Get number of sends
+     * Get number of sends stored
      */
     get length() {
         return this.mSends.length;
@@ -62,7 +77,7 @@ export class SendMgr {
      * Removes all sends that have a specified target
      * @param target
      */
-    removeAllTargeting(target: AudioNode) {
+    removeIfTargeting(target: AudioNode) {
         let i = 0;
         while (i < this.mSends.length) {
             if (Object.is(this.mSends[i].target, target)) {
@@ -74,6 +89,7 @@ export class SendMgr {
         }
     }
 
+    // Helper: cleans/removes all connections in an internal Send
     private cleanSend(send: Send) {
         send.disconnect();
         this.mInput.disconnect(send.input);

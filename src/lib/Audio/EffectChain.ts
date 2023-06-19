@@ -1,9 +1,10 @@
-
 // Manages an array of audio FX nodes chained together
+import {AudioEffect} from "./AudioEffect";
+
 export class EffectChain {
     private readonly mPreGain: GainNode;
     private mTarget: AudioNode;
-    private readonly mEffects: AudioNode[];
+    private readonly mEffects: AudioEffect<any>[];
     private readonly mContext: AudioContext;
 
     get input(): AudioNode { return this.mPreGain; }
@@ -12,9 +13,9 @@ export class EffectChain {
     get target(): AudioNode { return this.mTarget; }
     set target(newTarget: AudioNode) {
         if (this.mEffects.length > 0) { // re-connect last effect
-            const lastNode = this.mEffects[this.mEffects.length-1];
-            lastNode.disconnect();
-            lastNode.connect(newTarget);
+            const lastEffect = this.mEffects[this.mEffects.length-1];
+            lastEffect.disconnect();
+            lastEffect.connect(newTarget);
         } else {                        // no effects, re-connect preGain
             this.mPreGain.disconnect();
             this.mPreGain.connect(newTarget);
@@ -38,63 +39,58 @@ export class EffectChain {
     constructor(context: AudioContext, target?: AudioNode) {
         this.mContext = context;
         this.mTarget = target || context.destination;
-        this.mPreGain = new GainNode(context, {gain: 1});
+        this.mPreGain = new GainNode(context);
 
         this.mEffects = [];
     }
 
-    /**
-     * Push an effect onto the
-     * @param effectType
-     * @param options
-     */
-    push(effectType: new() => StereoPannerNode, options: StereoPannerOptions): PannerNode;
-    push(effectType: new() => PannerNode, options: PannerOptions): PannerNode;
-    push(effectType: new() => GainNode, options: GainOptions): GainNode;
-    push<T extends AudioNode>(effectType: new(p?: any) => T, options?: any): T {
-        let newFX: T = (options) ? new effectType(options) : new effectType;
-        return this.pushExisting(newFX);
-    }
+    // /**
+    //  * Push an effect onto the
+    //  * @param effectType
+    //  * @param options
+    //  */
+    // push<T extends AudioEffect<any>>(effectType: new(p?: any) => T, options?: any): T {
+    //     let newFX: T = (options) ? new effectType(options) : new effectType;
+    //     return this.pushExisting(newFX);
+    // }
 
-    pushExisting<T extends AudioNode>(newFX: T): T {
+    push<T extends AudioNode>(node: T): AudioEffect<T> {
+        const newFx = new AudioEffect<T>(node, this.mTarget);
         // connect audio node before to newFX
         if (this.mEffects.length === 0) { // empty effect chain
             this.mPreGain.disconnect();
-            this.mPreGain.connect(newFX);
+            this.mPreGain.connect(newFx.input);
         } else {                          // at least one effect
             const lastEffect = this.mEffects[this.mEffects.length-1];
             lastEffect.disconnect();
-            lastEffect.connect(newFX);
+            lastEffect.connect(newFx.input);
         }
 
-        // connect to end point
-        newFX.connect(this.mTarget);
-
         // done, commit changes
-        this.mEffects.push(newFX);
-        return newFX;
+        this.mEffects.push(newFx);
+        return newFx;
     }
 
     /** Remove first occurrence of effect type from the FX chain.
      * @param effectType type of effect to remove.
      * @returns disconnected effect if one was found, or null if none found.
      */
-    remove<T extends AudioNode>(effectType: new() => T): T | null {
+    remove<T extends AudioNode>(effectType: new() => T): AudioEffect<T> | null {
         // visit effects to find one to remove
         for (let i = 0; i < this.mEffects.length; ++i) {
-            if (this.mEffects[i] instanceof effectType) {  // found matching type!
+            if (this.mEffects[i].effect instanceof effectType) {  // found matching type!
                 // reconnect nodes
                 const effect = this.mEffects[i];
-                const before = (i === 0) ? this.mPreGain : this.mEffects[i - 1];
-                const after  = (i === this.mEffects.length - 1) ? this.mTarget : this.mEffects[i + 1];
+                const before = (i === 0) ? this.mPreGain : this.mEffects[i - 1].output;
+                const after  = (i === this.mEffects.length - 1) ? this.mTarget : this.mEffects[i + 1].input;
 
-                effect.disconnect();
+                effect.dispose();
                 before.disconnect();
                 before.connect(after);
 
                 // done, commit changes
                 this.mEffects.splice(i, 1);
-                return effect as T;
+                return effect as AudioEffect<T>;
             }
         }
 
@@ -104,20 +100,20 @@ export class EffectChain {
 
     // Get first effect of effectType. Returns null if none exists.
     // (Does not include preGain node or target end point)
-    get<T extends AudioNode>(effectType: new(opts?: any) => T): T | null  {
+    get<T extends AudioNode>(effectType: new(opts?: any) => T): AudioEffect<T> | null  {
         return this.getNth(effectType, 1);
     }
 
     // Get all effects of effectType.
-    getAllOf<T extends AudioNode>(effectType: new(opts?: any) => T): T[] {
-        return this.mEffects.filter(fx => fx instanceof effectType) as T[];
+    getAllOf<T extends AudioNode>(effectType: new(opts?: any) => T): AudioEffect<T>[] {
+        return this.mEffects.filter(fx => fx.effect instanceof effectType) as AudioEffect<T>[];
     }
 
     // Get the nth effect of effectType.
-    getNth<T extends AudioNode>(effectType: new(opts?: any) => T, n: number): T | null {
+    getNth<T extends AudioNode>(effectType: new(opts?: any) => T, n: number): AudioEffect<T> | null {
         for (let i = 0; i < this.mEffects.length; ++i) {
-            if (this.mEffects[i] instanceof effectType && --n <= 0)
-                return this.mEffects[i] as T;
+            if (this.mEffects[i].effect instanceof effectType && --n <= 0)
+                return this.mEffects[i] as AudioEffect<T>;
         }
 
         return null;
@@ -125,7 +121,7 @@ export class EffectChain {
 
     dispose() {
         this.mPreGain.disconnect();
-        this.mEffects.forEach(effect => effect.disconnect());
+        this.mEffects.forEach(effect => effect.dispose());
         this.mTarget = null;
         this.mEffects.splice(0, this.mEffects.length);
     }
