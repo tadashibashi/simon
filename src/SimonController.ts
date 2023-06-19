@@ -1,4 +1,4 @@
-import {Controller} from "./lib/Controller";
+import {Controller} from "./lib/UI/Controller";
 import {SimonModel} from "./SimonModel";
 import {SoundEffect} from "./lib/Audio/SoundEffect";
 import {MonoSynth} from "./lib/Audio/MonoSynth";

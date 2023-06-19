@@ -26,7 +26,19 @@ export class AudioEngine implements IDisposable {
         this.mSynths = new Map;
     }
 
-    async loadSound(url: string, busName?: string) {
+    getSound(url: string) {
+        return this.mSounds.get(url) || null;
+    }
+
+    getMusic(url: string) {
+        return this.mMusic.get(url) || null;
+    }
+
+    getSynth(name: string) {
+        return this.mSynths.get(name) || null;
+    }
+
+    loadSound(url: string, busName?: string) {
         let sound = this.mSounds.get(url);
         if (!sound) {
             let bus = busName ? this.mBusses.get(busName) : this.mBusses.master;
@@ -45,6 +57,8 @@ export class AudioEngine implements IDisposable {
 
         return sound;
     }
+
+
 
     loadMusic(url: string, busName?: string) {
         let music = this.mMusic.get(url);

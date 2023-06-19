@@ -1,4 +1,4 @@
-import {View} from "./lib/View";
+import {View} from "./lib/UI/View";
 import {SimonModel} from "./SimonModel";
 
 export class SimonView extends View<SimonModel> {
