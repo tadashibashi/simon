@@ -5,6 +5,7 @@
     "module": "ES6",
     "target": "ES5",
     "allowJs": true,
+    "sourceMap": true,
   },
   "include": ["src/**/*.ts"]
 }

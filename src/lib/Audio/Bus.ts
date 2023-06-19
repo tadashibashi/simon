@@ -2,7 +2,7 @@ import { EffectChain } from "./EffectChain";
 import {SendMgr} from "./SendMgr";
 
 // Bus connection graph: -> [fx] -> panner-node -> post-gain
-export class Bus
+export class Bus implements IDisposable
 {
     protected mPostGain: GainNode;
     protected mPanner: StereoPannerNode;
@@ -54,5 +54,10 @@ export class Bus
         this.mPostGain.disconnect();
         this.mEffects.dispose();
         this.mSends.dispose();
+
+        this.mPanner = null;
+        this.mPostGain = null;
+        this.mEffects = null;
+        this.mSends = null;
     }
 }

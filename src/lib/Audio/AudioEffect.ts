@@ -1,9 +1,13 @@
 /**
- *             /dry            \
+ * AudioEffect class wraps an AudioNode effect unit, adding dry/wet controls, and
+ * pre-post gain for gain-staging.
+ *
+ * AudioNode Graph:
+ *             /dry           \
  * inputGain <                 > outputGain -> target
  *             \wet -> effect /
  */
-export class AudioEffect<T extends AudioNode> {
+export class AudioEffect<T extends AudioNode> implements IDisposable {
     private mEffect: T;
     private mDry: GainNode;
     private mWet: GainNode;
@@ -11,16 +15,44 @@ export class AudioEffect<T extends AudioNode> {
     private mInput: GainNode;
     private mOutput: GainNode;
 
-    get effect(): T { return this.mEffect; }
-    get input(): GainNode { return this.mInput; }
-    get output(): GainNode { return this.mOutput; }
+    get effect(): T {
+        return this.mEffect;
+    }
+
+    get input(): GainNode {
+        return this.mInput;
+    }
+
+    get output(): GainNode {
+        return this.mOutput;
+    }
+
+    // Direct access to dry gain
+    get dry(): AudioParam {
+        return this.mDry.gain;
+    }
+
+    // Direct access to wet gain
+    get wet(): AudioParam {
+        return this.mWet.gain;
+    }
+
+    get preGain(): GainNode {
+        return this.mInput;
+    }
+
+    get postGain(): GainNode {
+        return this.mOutput;
+    }
 
     constructor(effect: T, target?: AudioNode) {
         const context = effect.context;
 
         this.mEffect = effect;
         this.mDry = new GainNode(context);
+        this.mDry.gain.value = 0;
         this.mWet = new GainNode(context);
+        this.mWet.gain.value = 1;
         this.mInput = new GainNode(context);
         this.mOutput = new GainNode(context);
 
@@ -57,7 +89,8 @@ export class AudioEffect<T extends AudioNode> {
     setWet(percent: number, rampTime: number = 0) {
         percent = Math.max(percent, 0);
         if (rampTime > 0)
-            this.mWet.gain.linearRampToValueAtTime(percent, this.mEffect.context.currentTime + rampTime);
+            this.mWet.gain.linearRampToValueAtTime(percent,
+                this.mEffect.context.currentTime + rampTime);
         else
             this.mWet.gain.value = percent;
     }
@@ -65,7 +98,8 @@ export class AudioEffect<T extends AudioNode> {
     setDry(percent: number, rampTime: number = 0) {
         percent = Math.max(percent, 0);
         if (rampTime > 0)
-            this.mDry.gain.linearRampToValueAtTime(percent, this.mEffect.context.currentTime + rampTime);
+            this.mDry.gain.linearRampToValueAtTime(percent,
+                this.mEffect.context.currentTime + rampTime);
         else
             this.mDry.gain.value = percent;
     }
@@ -83,5 +117,4 @@ export class AudioEffect<T extends AudioNode> {
         this.mInput = null;
         this.mOutput = null;
     }
-
 }

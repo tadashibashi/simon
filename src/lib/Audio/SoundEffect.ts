@@ -1,16 +1,16 @@
 // Class intended for short one-shot sound effects.
 // If you need longer audio with more controls for music or ambience, please use the `Music` class.
-import {Delegate} from "../Delegate";
+import { Delegate } from "../Delegate";
+import { loadAudioBuffer } from "./Loading";
+import { Sound } from "./Sound";
 
-export class SoundEffect {
-    private readonly context: AudioContext;
+export class SoundEffect extends Sound<AudioBufferSourceNode> {
     private readonly defaults: AudioBufferSourceOptions;
-    private readonly target: AudioNode;
 
     onended: Delegate<[AudioBufferSourceNode, SoundEffect]>;
 
-    constructor(context: AudioContext, target: AudioNode) {
-        this.context = context;
+    constructor(context: AudioContext, target?: AudioNode, url?: string) {
+        super(context, null, target);
         this.defaults = {
             buffer: null,
             loop: false,
@@ -22,6 +22,9 @@ export class SoundEffect {
 
         this.onended = new Delegate<[AudioBufferSourceNode, SoundEffect]>;
         this.onendedHandler = this.onendedHandler.bind(this);
+
+        if (url)
+            this.load(url);
     }
 
     get isLoaded() { return this.defaults.buffer !== null; }
@@ -38,10 +41,8 @@ export class SoundEffect {
     get detune() { return this.defaults.detune; }
 
 
-    async load(url: string) {
-        const res = await fetch(url);
-        const buf = await res.arrayBuffer();
-        return await this.context.decodeAudioData(buf)
+    override async load(url: string) {
+        return loadAudioBuffer(this.context, url)
             .then(aBuf => {
                 this.defaults.buffer = aBuf;
                 return true;
@@ -56,22 +57,25 @@ export class SoundEffect {
         this.onended.invoke(evt.target as AudioBufferSourceNode, this);
     }
 
-    unload() { this.defaults.buffer = null; }
+    override unload() { this.defaults.buffer = null; }
 
     /**
-     *
+     * Fire and forget. Please do not call start on the returned AudioBufferSourceNode.
      * @param when when to start playing, in seconds, relative to now
      * @param offset where in the audio file to start playing, in seconds
      * @param duration how long to play the file, in seconds. If not specified, plays the whole file.
      */
-    play(when: number = 0, offset: number = 0, duration?: number): AudioBufferSourceNode {
+    override play(when: number = 0, offset: number = 0, duration?: number): AudioBufferSourceNode {
         const srcNode = (this.defaults) ?
-            new AudioBufferSourceNode(this.context,this.defaults) :
+            new AudioBufferSourceNode(this.context, this.defaults) :
             new AudioBufferSourceNode(this.context);
-        srcNode.connect(this.target);
+        srcNode.connect(this.effects.input);
         srcNode.onended = this.onendedHandler;
-        srcNode.start(this.context.currentTime + when, offset, duration);
 
+        if (duration === undefined)
+            srcNode.start(this.context.currentTime + when, offset);
+        else
+            srcNode.start(this.context.currentTime + when, offset, duration);
         return srcNode;
     }
 }

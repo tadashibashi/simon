@@ -2,15 +2,15 @@
 // is created, which by default is attached to the AudioContext#destination, unless otherwise
 // specified. All busses created by this manager are attached to the master bus by default.
 // Created busses are stored in the manager by key, and can be retrieved via BusMgr#get
-
 import { Bus } from "./Bus";
 
-export class BusMgr {
+export class BusMgr implements IDisposable {
     private mMasterBus: Bus;
     private mBusses: Map<string, Bus>;
     private readonly mContext: AudioContext;
 
     get context() { return this.mContext; }
+    get master() { return this.mMasterBus; }
 
     /**
      * @param context - audio context
@@ -20,6 +20,8 @@ export class BusMgr {
         this.mContext = context;
         this.mMasterBus = new Bus(context, target);
         this.mBusses = new Map;
+
+        this.mBusses.set("master", this.mMasterBus);
     }
 
     /**
@@ -49,5 +51,13 @@ export class BusMgr {
         if (bus)
             bus
         return this.mBusses.delete(key);
+    }
+
+    dispose() {
+        this.mBusses.forEach(bus => bus.dispose());
+        this.mBusses.clear();
+
+        this.mBusses = null;
+        this.mMasterBus = null;
     }
 }

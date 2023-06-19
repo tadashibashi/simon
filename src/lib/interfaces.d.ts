@@ -1,6 +1,9 @@
-
-declare interface ICopyable {
-    copy(): any;
+// Implements a function dispose(), which destructs the object.
+// Call to dispose() should free resources and references those
+// resources.
+declare interface IDisposable {
+    // Call when destructing this object.
+    dispose(): void;
 }
 
 declare type TypedArray =
@@ -13,6 +16,3 @@ declare type TypedArray =
     | Uint32Array
     | Float32Array
     | Float64Array;
-
-// Able to make a deep-clone of itself via "copy()"
-
