@@ -7,6 +7,8 @@ body {
   margin: 0;
 }
 
+/* ===== Overlay =========================================================== */
+
 #overlay {
   position: fixed;
   background: rgba(255, 255, 255, 0.35);
@@ -62,6 +64,8 @@ body {
   z-index: 3;
 }
 
+/* ===== Game board ======================================================== */
+
 #simon {
   margin: 24vmin auto auto;
   width: 50vmin;
@@ -77,7 +81,8 @@ body {
   box-shadow: -20px 20px 20px 1px rgba(70, 70, 70, 0.45);
 }
 
-/* DISPLAY */
+/* ===== Display =========================================================== */
+
 .display {
   position: absolute;
   top: 19vmin;
@@ -105,6 +110,7 @@ body {
   width: 10vmin;
 }
 
+/* ===== Play-again button ================================================= */
 
 #play-again {
   font-family: 'Press Start 2P', cursive;
@@ -139,7 +145,7 @@ body {
   transition-delay: 1s;
 }
 
-/* ===== BUTTONS =========================================================== */
+/* ===== Buttons =========================================================== */
 
 #simon > .buttons > div {
   position: absolute;
@@ -147,7 +153,7 @@ body {
   height: 10vmin;
 }
 
-/* ===== RED BUTTON ======================================================== */
+/* ===== Red button ======================================================== */
 
 #simon > .buttons > div:nth-of-type(1) {
   top: 0;
@@ -176,7 +182,8 @@ body {
 }
 
 
-/* ===== GREEN BUTTON ===================================================== */
+/* ===== Green button ===================================================== */
+
 #simon > .buttons > div:nth-of-type(2) {
   top: 16vmin;
   right: 0;
@@ -202,7 +209,8 @@ body {
   transition: opacity ease-in-out .5s;
 }
 
-/* ===== BLUE BUTTON ======================================================= */
+/* ===== Blue button ======================================================= */
+
 #simon > .buttons > div:nth-of-type(3) {
   bottom: 0;
   left: 16vmin;
@@ -228,7 +236,8 @@ body {
   transition: opacity ease-in-out .5s;
 }
 
-/* ===== YELLOW BUTTON ===================================================== */
+/* ===== Yellow button ===================================================== */
+
 #simon > .buttons > div:nth-of-type(4) {
   top: 16vmin;
   left: 0;
