@@ -1,6 +1,6 @@
 # SIMON Clone
 
-![Simon Wireframe](simon-wireframe.png)
+![Simon Wireframe](simon-wireframe-2.png)
 *Wireframe Draft*
 
 Re-creation of the classic Simon game, using HTML, Typescript, and CSS.
