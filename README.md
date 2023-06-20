@@ -5,7 +5,7 @@
 
 Re-creation of the classic Simon game, using HTML, Typescript, and CSS.
 
-A live build will be hosted and available here once it has been released.
+A live build can be found [here](https://aaronishibashi.com/portfolio/web/ga/simon/).
 
 ## Installation
 With NodeJS installed on your machine, run `npm init`, and `npm run start`.
@@ -14,7 +14,7 @@ All deliverables should then be available in `dist/`.
 
 ## Goals
 - Create simple, but nice front-end design
-- Learn/Use Web Audio API, fallback to `<audio>`
+- Learn/Use Web Audio API
 
 
 ## MVP
@@ -27,6 +27,7 @@ All deliverables should then be available in `dist/`.
     - Limit the time to get button
   - If player runs out of time or presses the wrong button, show score
 
+
 ## Game States
 
 ### 1. Standby
@@ -38,10 +39,6 @@ any audio can play.
 
 ### 2. GamePlay
 Main gameplay loop
-
-#### - CountDown
-Initialize props and state variables.
-Show a countdown overlay to prepare the player: 3, 2, 1, Start!
 
 #### - PlayTones
 Game will play sequence of tones back to the player, at the speed
@@ -56,15 +53,13 @@ player enters the wrong tone, player loses, go to *3. Result* screen.
 If correct, unset timeout, and fire another one until all correct tones played.
 If all are correct, go to *RewardTone*.
 
-#### - RewardTone
-Check if player has reached 10, 20, or 30 points, play a short rewarding sfx.
-Go to *PlayTones* game state.
 
 ### 3. Result
 Show score, play sfx depending on how many points player achieved.
 
 Wait a couple seconds, then fade in a "Play again?" button.
 If this button is pressed, go to state *2. GamePlay*
+
 
 
 ## Model 
@@ -85,7 +80,7 @@ Set only once at the beginning of each game.
 - Randomized sequence
 
 ### "Nice to Haves"
-
+- Audio fallback to `<audio>` when WebAudio API not available
 - Difficulty mode (speed inclines quicker)
 - Diversify tones in different keys (player must adjust to new tones every time)
 - Music on the standby screen & result screen

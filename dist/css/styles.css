@@ -20,6 +20,8 @@ body {
 
   transition: opacity ease 1s;
   opacity: 1;
+
+  user-select: none;
 }
 
 #overlay.hide {
@@ -253,11 +255,22 @@ body {
 }
 
 
+/* ===== Shadow div ======================================================= */
+
 #simon > .buttons > div > div {
   pointer-events: none;
+  transition: background .3s;
+  z-index: 1;
 }
 
+#simon > .buttons > div > div.lose {
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.59);
+  box-shadow: none;
+  opacity: 1;
+}
 
+/* ===== Blink animation =================================================== */
 
 @keyframes blink {
   0% {
@@ -274,6 +287,8 @@ body {
 #simon > .buttons > div > div.blink {
   opacity: 1;
 }
+
+/* ===== Volume slider ===================================================== */
 
 #volume-label {
   user-select: none;

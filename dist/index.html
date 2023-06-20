@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>SIMON Clone</title>
+    <title>SIMON</title>
 
     <!--  Font Awesome  -->
     <script src="https://kit.fontawesome.com/a8d80231ea.js" crossorigin="anonymous"></script>
@@ -13,7 +13,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
-    <!--  Style Sheet  -->
+    <!--  Local stylesheet  -->
     <link rel="stylesheet" href="./css/styles.css" />
 </head>
 <body>
@@ -22,24 +22,44 @@
             <div class="play"></div>
         </div>
     </div>
+
+    <!--  Simon game board  -->
     <div id="simon">
+
+        <!-- Four main buttons -->
         <div class="buttons">
-            <div id="red-button"><div></div></div>
-            <div id="green-button"><div></div></div>
-            <div id="blue-button"><div></div></div>
-            <div id="yellow-button"><div></div></div>
+            <div id="red-button">
+                <!-- Inner divs used for performant fading box-shadows -->
+                <div></div>
+            </div>
+
+            <div id="green-button">
+                <div></div>
+            </div>
+
+            <div id="blue-button">
+                <div></div>
+            </div>
+
+            <div id="yellow-button">
+                <div></div>
+            </div>
         </div>
 
+        <!-- Game name and volume control -->
         <div class="display">
             <h2>SIMON</h2>
-<!-- fa-volume-high, fa-volume-low, fa-volume-off -->
             <label id="volume-label" for="volume"><i class="fa-solid fa-volume-high"></i>
                 <input id="volume" type="range" />
             </label>
         </div>
-    </div>
+
+    </div> <!-- end Simon game board -->
+
+    <!-- Play again button -->
     <div id="play-again" class="first-hide">Play Again?</div>
 
+    <!-- Local script bundle -->
     <script src="main.js"></script>
 </body>
 </html>
