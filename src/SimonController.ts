@@ -1,8 +1,6 @@
+import {AudioEngine} from "./lib/Audio/AudioEngine";
 import {Controller} from "./lib/UI/Controller";
 import {GameState, SimonModel} from "./SimonModel";
-import {SoundEffect} from "./lib/Audio/SoundEffect";
-import {MonoSynth} from "./lib/Audio/MonoSynth";
-import {AudioEngine} from "./lib/Audio/AudioEngine";
 
 async function loadSound(context: AudioContext, url: string): Promise<{buffer: AudioBuffer, url: string}> {
     return new Promise((resolve, reject) => {
@@ -28,6 +26,11 @@ export class SimonController extends Controller<SimonModel> {
 
     constructor(model: SimonModel) {
         super(model);
+
+        // Used as event listener, must bind this
+        this.keydownHandler = this.keydownHandler.bind(this);
+
+        // Init audio, preload impulse response used in reverb
         model.props.audio.init();
         loadSound(model.props.audio.context, "ir-cinema-room.wav").then((buf) => {
             this.ir = buf.buffer;
@@ -35,113 +38,141 @@ export class SimonController extends Controller<SimonModel> {
         });
     }
 
-    playTones() {
-        const buttons = document.querySelectorAll("#simon > .buttons > div");
-        // start interval
+    private playTones() {
+        const buttons = this.model.props.buttons.children;
+
+        // space playback via an interval
         const interval = setInterval(() => {
-            this.buttonBlink(buttons[this.model.props.order[this.model.state.progress]] as HTMLElement);
+
+            this.playButtonAnimSound(
+                buttons[this.getAnswerButtonIndex()] as HTMLElement);
+
+            // progress to the next tone/state
             this.model.progress();
-            if (this.model.state.progress === 0) {
+
+            // exit case
+            if (this.model.state.progress === 0)
                 clearInterval(interval);
-            }
+
         }, this.model.state.speed);
     }
 
-    init() {
-        //this.testAudio();
-        this.initSoundbar();
-        this.initAudio();
-
+    // Overlay appears as a dimmed screen with play button.
+    // Player can click anywhere on the overlay to remove it and start the game.
+    private initOverlay() {
         const overlay = document.getElementById("overlay");
+
+        // clicking overlay will hide it, and start the game
         overlay.addEventListener("click", evt => {
-            evt.stopPropagation();
-            if (overlay.classList.contains("hide")) return;
+            evt.stopPropagation(); // prevent clicks from penetrating overlay
+            if (overlay.classList.contains("hide")) return; // only hide once
 
             overlay.classList.add("hide");
+
             this.model.startGame();
+
+            // start tone playback & remove overlay in 1 second
             setTimeout(() => {
                 this.playTones();
                 document.body.removeChild(overlay);
             }, 1000);
         });
+    }
 
-        const playAgain = document.getElementById("play-again");
+    private activateButton(target: HTMLElement) {
+        if (!target) return; // reject null/undefined from invalid input
 
-        const buttons = document.querySelector("#simon > .buttons") as HTMLElement;
-        buttons.addEventListener("click", evt => {
-            const target = evt.target as HTMLElement;
+        const state = this.model.state.gameState;
+        switch(state) {
+            case GameState.Response:
+            case GameState.AwaitResponse: {
+                const id = target.getAttribute("id");
 
-            switch(this.model.state.gameState) {
-                case GameState.Standby:
+                if (this.getAnswerButtonIndex() === getButtonIndexFromID(id)) {  // player input correctly
+                    this.playButtonAnimSound(target); // visual/audio fx
+                    this.model.progress();        // progress game logic
 
-                    break;
+                    if (this.model.state.gameState === GameState.PlayTones) { // track exit case
 
-                case GameState.Response:
-                case GameState.AwaitResponse: {
-                    const id = target.getAttribute("id");
-                    this.buttonBlink(target);
-                    let pressed;
-                    switch(id) {
-                        case "red-button": // play sounds here
-                            pressed = 0;
-                            break;
-                        case "green-button":
-                            pressed = 1;
-                            break;
-                        case "blue-button":
-                            pressed = 2;
-                            break;
-                        case "yellow-button":
-                            pressed = 3;
-                            break;
+                        // finished player response, start playing next round
+                        setTimeout(() => this.playTones(), 600);
                     }
+                } else {                              // player input incorrectly
+                    showPlayAgainButton(this.model.props.playAgain);
+                    this.model.lose();
 
-                    if (this.model.props.order[this.model.state.progress] === pressed) {
-                        this.model.progress();
+                    // TODO: Play SFX for losing
+                }
+            } break;
+        }
 
-                        // @ts-ignore
-                        if (this.model.state.gameState === GameState.PlayTones) {
-                            setTimeout(() => this.playTones(), 600);
-                        }
 
-                        // play sound, wait
 
-                    } else {
-                        this.model.lose();
-                        playAgain.classList.add("show");
-                        playAgain.classList.remove("first-hide");
-                    }
-                } break;
+        function showPlayAgainButton(playAgain: HTMLElement) {
+            playAgain.classList.add("show");
+            playAgain.classList.remove("first-hide");
+        }
 
-            }
-        });
-
-        document.addEventListener("keydown", evt => {
-            if (evt.repeat) return;
-            const btns = buttons.children as HTMLCollectionOf<HTMLDivElement>;
-
-            switch(evt.code) {
-                case "ArrowLeft":
-                case "KeyA":
-                    btns[3].click();
-                    break;
-                case "ArrowRight":
-                case "KeyD":
-                    btns[1].click();
-                    break;
-                case "ArrowUp":
-                case "KeyW":
-                    btns[0].click();
-                    break;
-                case "ArrowDown":
-                case "KeyS":
-                    btns[2].click();
-                    break;
+        function getButtonIndexFromID(id: string) {
+            let pressed;
+            switch(id) {
+                case "red-button":    pressed = 0; break;
+                case "green-button":  pressed = 1; break;
+                case "blue-button":   pressed = 2; break;
+                case "yellow-button": pressed = 3; break;
+                default:              pressed = -1;break; // should throw?
             }
 
-            console.log(evt.code);
-        });
+            return pressed;
+        }
+    }
 
+    // get current answer that player must guess correctly
+    private getAnswerButtonIndex() {
+        return this.model.props.order[this.model.state.progress];
+    }
+
+    private keydownHandler(evt: KeyboardEvent) {
+        if (evt.repeat) return; // quit on repeat presses
+
+        const btns = this.model.props.buttons.children as HTMLCollectionOf<HTMLDivElement>;
+        let button: HTMLElement;
+        switch(evt.code) {
+            case "ArrowLeft":
+            case "KeyA":
+                button = btns[3];
+                break;
+            case "ArrowRight":
+            case "KeyD":
+                button = btns[1];
+                break;
+            case "ArrowUp":
+            case "KeyW":
+                button = btns[0];
+                break;
+            case "ArrowDown":
+            case "KeyS":
+                button = btns[2];
+                break;
+            default:
+                button = null;
+                break;
+        }
+
+        this.activateButton(button);
+    }
+
+    private initMainUI() {
+        const buttons = this.model.props.buttons;
+
+        // Click controls (contains main logic)
+        buttons.addEventListener("click", evt =>
+            this.activateButton(evt.target as HTMLElement));
+
+        // Keyboard controls (triggers click)
+        document.addEventListener("keydown", this.keydownHandler);
+
+        // Button animation end. Removes anim class.
         buttons.addEventListener("animationend", evt => {
             const target = evt.target as HTMLElement;
             if (evt.animationName === "blink") {
@@ -150,6 +181,8 @@ export class SimonController extends Controller<SimonModel> {
             }
         });
 
+        // Click "Play Again?" button
+        const playAgain = this.model.props.playAgain;
         playAgain.addEventListener("click", evt => {
 
             if (playAgain.classList.contains("show")) {
@@ -160,7 +193,18 @@ export class SimonController extends Controller<SimonModel> {
         });
     }
 
-    initAudio() {
+
+    init() {
+        //this.testAudio();
+        this.initSoundbar();
+        this.initAudio();
+        this.initOverlay();
+        this.initMainUI();
+    }
+
+
+    // Called in init(). Loads audio for each button.
+    private initAudio() {
         const audio = this.model.props.audio;
         audio.loadSynth("red-button", "master", {
             type: "sine",
@@ -195,15 +239,14 @@ export class SimonController extends Controller<SimonModel> {
         });
     }
 
-    playSound(target: HTMLElement) {
+    private playSound(target: HTMLElement) {
         const audio = this.model.props.audio;
         const synth = audio.getSynth(target.id);
         if (synth)
             synth.play();
-        console.log(synth);
     }
 
-    buttonBlink(target: HTMLElement) {
+    private playButtonAnimSound(target: HTMLElement) {
 
         this.playSound(target);
 
@@ -258,6 +301,7 @@ export class SimonController extends Controller<SimonModel> {
         });
     }
 
+    /*
     async testAudio() {
         const m = this.model;
         const audio = m.props.audio;
@@ -296,4 +340,5 @@ export class SimonController extends Controller<SimonModel> {
             sound.play();
         });
     }
+    */
 }

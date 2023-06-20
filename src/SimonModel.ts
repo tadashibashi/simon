@@ -49,6 +49,7 @@ export interface SimonProps {
     volume: HTMLInputElement;
     order: Uint8Array;
     audio: AudioEngine; // audio engine
+    playAgain: HTMLElement;
 }
 
 
@@ -56,6 +57,7 @@ export class SimonModel extends Model<SimonProps, SimonState, Action> {
     constructor() {
         const props: SimonProps = {
             buttons: document.querySelector(".buttons"),
+            playAgain: document.getElementById("play-again"),
             order: new Uint8Array(30),
             volume: document.querySelector("#volume"),
             audio: new AudioEngine
