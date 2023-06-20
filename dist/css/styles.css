@@ -4,10 +4,64 @@
 
 body {
   background: #f3f3f3;
+  margin: 0;
+}
+
+#overlay {
+  position: fixed;
+  background: rgba(255, 255, 255, 0.35);
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+
+  transition: opacity ease 1s;
+  opacity: 1;
+}
+
+#overlay.hide {
+  opacity: 0;
+}
+
+#overlay > .circle {
+  position: absolute;
+  width: 30vmin;
+  height: 30vmin;
+
+  top: 50%;
+  left: 50%;
+  transform:translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.77);
+  margin: auto;
+
+  z-index: 3;
+}
+
+#overlay > .circle > .play {
+  position: absolute;
+  width: 0;
+  height: 0;
+
+  border-left: 10vmin solid gray;
+  border-top: 5vmin solid transparent;
+  border-bottom: 5vmin solid transparent;
+
+  top: 50%;
+  left: 55%;
+  transform:translate(-50%, -50%);
+
+  background: rgba(255, 255, 255, 0.77);
+  margin: auto;
+
+  z-index: 3;
 }
 
 #simon {
-  margin: 20vmin auto auto;
+  margin: 24vmin auto auto;
   width: 50vmin;
   height: 50vmin;
   position: relative;
@@ -18,7 +72,7 @@ body {
   border-radius: 10vmin;
   background: lightgray;
 
-  box-shadow: -2px 2px 1px 1px rgba(70, 70, 70, 0.45);
+  box-shadow: -20px 20px 20px 1px rgba(70, 70, 70, 0.45);
 }
 
 /* DISPLAY */
@@ -36,6 +90,8 @@ body {
   font-family: 'Press Start 2P', cursive;
   text-align: center;
   font-size: 2vmin;
+
+  user-select: none;
 }
 
 .display > label {
@@ -45,6 +101,40 @@ body {
 
 .display input[type="range"] {
   width: 10vmin;
+}
+
+
+#play-again {
+  font-family: 'Press Start 2P', cursive;
+  border-radius: 5px;
+  border: 2px solid black;
+
+  width: 28vmin;
+  height: 4vmin;
+  font-size: 2vmin;
+
+  text-align: center;
+  margin: 3vmin auto;
+  padding-top: .5vmin;
+
+  user-select: none;
+  opacity: 0;
+
+  transition: opacity 1s ease;
+  transition-delay: 0s;
+
+  box-shadow: -20px 20px 20px 1px rgba(70, 70, 70, 0.45);
+  text-shadow: -20px 20px 20px 1px rgba(70, 70, 70, 0.45);
+}
+
+.first-hide {
+  visibility: hidden;
+}
+
+#play-again.show {
+  opacity: 1;
+  transition: opacity 1s ease;
+  transition-delay: 1s;
 }
 
 /* ===== BUTTONS =========================================================== */

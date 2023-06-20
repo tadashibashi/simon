@@ -1,5 +1,5 @@
 import {Controller} from "./lib/UI/Controller";
-import {SimonModel} from "./SimonModel";
+import {GameState, SimonModel} from "./SimonModel";
 import {SoundEffect} from "./lib/Audio/SoundEffect";
 import {MonoSynth} from "./lib/Audio/MonoSynth";
 import {AudioEngine} from "./lib/Audio/AudioEngine";
@@ -35,28 +35,111 @@ export class SimonController extends Controller<SimonModel> {
         });
     }
 
+    playTones() {
+        const buttons = document.querySelectorAll("#simon > .buttons > div");
+        // start interval
+        const interval = setInterval(() => {
+            this.buttonBlink(buttons[this.model.props.order[this.model.state.progress]] as HTMLElement);
+            this.model.progress();
+            if (this.model.state.progress === 0) {
+                clearInterval(interval);
+            }
+        }, this.model.state.speed);
+    }
+
     init() {
-        this.testAudio();
+        //this.testAudio();
         this.initSoundbar();
+        this.initAudio();
+
+        const overlay = document.getElementById("overlay");
+        overlay.addEventListener("click", evt => {
+            evt.stopPropagation();
+            if (overlay.classList.contains("hide")) return;
+
+            overlay.classList.add("hide");
+            this.model.startGame();
+            setTimeout(() => {
+                this.playTones();
+                document.body.removeChild(overlay);
+            }, 1000);
+        });
+
+        const playAgain = document.getElementById("play-again");
 
         const buttons = document.querySelector("#simon > .buttons") as HTMLElement;
-
         buttons.addEventListener("click", evt => {
             const target = evt.target as HTMLElement;
-            const id = target.getAttribute("id");
-            switch(id) {
-                case "red-button":
-                case "green-button":
-                case "blue-button":
-                case "yellow-button":
-                {
-                    const child = target.children[0];
-                    child.classList.remove("blink");
-                    child.classList.add("blink");
-                    target.classList.remove("blink");
-                    target.classList.add("blink");
+
+            switch(this.model.state.gameState) {
+                case GameState.Standby:
+
+                    break;
+
+                case GameState.Response:
+                case GameState.AwaitResponse: {
+                    const id = target.getAttribute("id");
+                    this.buttonBlink(target);
+                    let pressed;
+                    switch(id) {
+                        case "red-button": // play sounds here
+                            pressed = 0;
+                            break;
+                        case "green-button":
+                            pressed = 1;
+                            break;
+                        case "blue-button":
+                            pressed = 2;
+                            break;
+                        case "yellow-button":
+                            pressed = 3;
+                            break;
+                    }
+
+                    if (this.model.props.order[this.model.state.progress] === pressed) {
+                        this.model.progress();
+
+                        // @ts-ignore
+                        if (this.model.state.gameState === GameState.PlayTones) {
+                            setTimeout(() => this.playTones(), 600);
+                        }
+
+                        // play sound, wait
+
+                    } else {
+                        this.model.lose();
+                        playAgain.classList.add("show");
+                        playAgain.classList.remove("first-hide");
+                    }
                 } break;
+
             }
+        });
+
+        document.addEventListener("keydown", evt => {
+            if (evt.repeat) return;
+            const btns = buttons.children as HTMLCollectionOf<HTMLDivElement>;
+
+            switch(evt.code) {
+                case "ArrowLeft":
+                case "KeyA":
+                    btns[3].click();
+                    break;
+                case "ArrowRight":
+                case "KeyD":
+                    btns[1].click();
+                    break;
+                case "ArrowUp":
+                case "KeyW":
+                    btns[0].click();
+                    break;
+                case "ArrowDown":
+                case "KeyS":
+                    btns[2].click();
+                    break;
+            }
+
+            console.log(evt.code);
         });
 
         buttons.addEventListener("animationend", evt => {
@@ -65,10 +148,71 @@ export class SimonController extends Controller<SimonModel> {
                 target.classList.remove("blink");
                 target.children[0].classList.remove("blink");
             }
-        })
+        });
+
+        playAgain.addEventListener("click", evt => {
+
+            if (playAgain.classList.contains("show")) {
+                playAgain.classList.remove("show");
+                this.model.startGame();
+                this.playTones();
+            }
+        });
     }
 
+    initAudio() {
+        const audio = this.model.props.audio;
+        audio.loadSynth("red-button", "master", {
+            type: "sine",
+            frequency: 279.42
+        }).envelope.set({
+            attackTime: .1,
+            releaseTime: .1
+        });
 
+        audio.loadSynth("green-button", "master", {
+            type: "sine",
+            frequency: 418.65
+        }).envelope.set({
+            attackTime: .1,
+            releaseTime: .1
+        });
+
+        audio.loadSynth("blue-button", "master", {
+            type: "sine",
+            frequency: 440
+        }).envelope.set({
+            attackTime: .1,
+            releaseTime: .1
+        });
+
+        audio.loadSynth("yellow-button", "master", {
+            type: "sine",
+            frequency: 469.92
+        }).envelope.set({
+            attackTime: .1,
+            releaseTime: .1
+        });
+    }
+
+    playSound(target: HTMLElement) {
+        const audio = this.model.props.audio;
+        const synth = audio.getSynth(target.id);
+        if (synth)
+            synth.play();
+        console.log(synth);
+    }
+
+    buttonBlink(target: HTMLElement) {
+
+        this.playSound(target);
+
+        const child = target.children[0];
+        child.classList.remove("blink");
+        child.classList.add("blink");
+        target.classList.remove("blink");
+        target.classList.add("blink");
+    }
 
     initSoundbar() {
         const volIcon = document.querySelector("#volume-label > i");

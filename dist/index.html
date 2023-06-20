@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Simon</title>
+    <title>SIMON Clone</title>
 
     <!--  Font Awesome  -->
     <script src="https://kit.fontawesome.com/a8d80231ea.js" crossorigin="anonymous"></script>
@@ -17,6 +17,11 @@
     <link rel="stylesheet" href="./css/styles.css" />
 </head>
 <body>
+    <div id="overlay">
+        <div class="circle">
+            <div class="play"></div>
+        </div>
+    </div>
     <div id="simon">
         <div class="buttons">
             <div id="red-button"><div></div></div>
@@ -33,6 +38,7 @@
             </label>
         </div>
     </div>
+    <div id="play-again" class="first-hide">Play Again?</div>
 
     <script src="main.js"></script>
 </body>

@@ -29,6 +29,8 @@ export abstract class Model<Props, State, ActionType> {
         // Fire callback to listener
         if (this.onStateUpdated)
             this.onStateUpdated(this);
+
+        console.log(this.state);
     }
 
     // To be implemented by child class, but not called directly. Please use reducer().
