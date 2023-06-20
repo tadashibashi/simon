@@ -1,4 +1,4 @@
-import {Model} from "./Model";
+import { Model } from "./Model";
 
 export abstract class View<M extends Model<any, any, any> > {
     protected model: M;

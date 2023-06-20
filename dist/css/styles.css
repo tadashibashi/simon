@@ -2,19 +2,203 @@
   box-sizing: border-box;
 }
 
-#simon > .buttons {
-  margin: 0 auto;
+body {
+  background: #f3f3f3;
+}
+
+#simon {
+  margin: 20vmin auto auto;
   width: 50vmin;
   height: 50vmin;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  position: relative;
 
+  border: 1px solid #c2c1c1;
+  border-left: 4px solid #b9b9b9;
+  border-right: 4px solid #d5d5d5;
+  border-radius: 10vmin;
+  background: lightgray;
+
+  box-shadow: -2px 2px 1px 1px rgba(70, 70, 70, 0.45);
 }
+
+/* DISPLAY */
+.display {
+  position: absolute;
+  top: 19vmin;
+  left: 17vmin;
+  width: 15vmin;
+  height: 12vmin;
+
+  color: #656565;
+}
+
+.display > h2 {
+  font-family: 'Press Start 2P', cursive;
+  text-align: center;
+  font-size: 2vmin;
+}
+
+.display > label {
+  font-size: 2vmin;
+  padding-left: 1vmin;
+}
+
+.display input[type="range"] {
+  width: 10vmin;
+}
+
+/* ===== BUTTONS =========================================================== */
 
 #simon > .buttons > div {
-  width: 100%;
-  height: 100%;
-  border: 1px solid black;
+  position: absolute;
+  width: 10vmin;
+  height: 10vmin;
 }
 
+/* ===== RED BUTTON ======================================================== */
+
+#simon > .buttons > div:nth-of-type(1) {
+  top: 1.5vmin;
+  left: 16vmin;
+  border-radius: 0 0 5vmin 5vmin;
+  border: 2px solid #cb2020;
+  width: 18vmin;
+  height: 15vmin;
+
+  background: linear-gradient(90deg, rgb(80, 32, 32, 70), rgba(255, 10, 10, 70));
+  transition: background .5s ease;
+}
+
+#simon > .buttons > div:nth-of-type(1).blink {
+  background: linear-gradient(90deg, rgb(255, 27, 27), rgb(239, 111, 111, 255));
+}
+
+#simon > .buttons > div:nth-of-type(1) > div {
+  border-radius: 0 0 5vmin 5vmin;
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+  box-shadow: 0 0 20px 20px #eca5b1;
+  transition: opacity ease-in-out .5s;
+}
+
+
+/* ===== GREEN BUTTON ===================================================== */
+#simon > .buttons > div:nth-of-type(2) {
+  top: 16vmin;
+  right: 1.5vmin;
+  border-radius: 5vmin 0 0 5vmin;
+  border: 2px solid #20cb42;
+  width: 15vmin;
+  height: 18vmin;
+
+  background: linear-gradient(90deg, rgb(32, 80, 33), rgb(10, 255, 43));
+  transition: background .5s ease;
+}
+
+#simon > .buttons > div:nth-of-type(2).blink {
+  background: linear-gradient(90deg, rgb(27, 255, 31), rgb(111, 239, 117));
+}
+#simon > .buttons > div:nth-of-type(2) > div {
+  border-radius: 5vmin 0 0 5vmin;
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+  box-shadow: 0 0 20px 20px #a5ecae;
+  transition: opacity ease-in-out .5s;
+}
+
+/* ===== BLUE BUTTON ======================================================= */
+#simon > .buttons > div:nth-of-type(3) {
+  bottom: 1.5vmin;
+  left: 16vmin;
+  border-radius: 5vmin 5vmin 0 0;
+  border: 2px solid #2050cb;
+  width: 18vmin;
+  height: 15vmin;
+
+  background: linear-gradient(90deg, rgb(32, 43, 80), rgb(10, 67, 255));
+  transition: background .5s ease;
+}
+
+#simon > .buttons > div:nth-of-type(3).blink {
+  background: linear-gradient(90deg, rgb(27, 99, 255), rgb(111, 156, 239));
+}
+#simon > .buttons > div:nth-of-type(3) > div {
+  border-radius: 5vmin 5vmin 0 0;
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+  box-shadow: 0 0 20px 20px #a5bbec;
+  transition: opacity ease-in-out .5s;
+}
+
+/* ===== YELLOW BUTTON ===================================================== */
+#simon > .buttons > div:nth-of-type(4) {
+  top: 16vmin;
+  left: 1.5vmin;
+  border-radius: 0 5vmin 5vmin 0;
+  border: 2px solid #cb9b20;
+  width: 15vmin;
+  height: 18vmin;
+
+  background: linear-gradient(90deg, rgb(80, 63, 32), rgb(255, 157, 10));
+  transition: background .5s ease;
+}
+
+#simon > .buttons > div:nth-of-type(4).blink {
+  background: linear-gradient(90deg, rgb(255, 130, 27), rgb(239, 194, 111));
+}
+#simon > .buttons > div:nth-of-type(4) > div {
+  border-radius: 0 5vmin 5vmin 0;
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+  box-shadow: 0 0 20px 20px #ecd3a5;
+  transition: opacity ease-in-out .5s;
+}
+
+
+#simon > .buttons > div > div {
+  pointer-events: none;
+}
+
+
+
+@keyframes blink {
+  0% {
+    transform: scale(.98);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+#simon > .buttons > div.blink {
+  animation: blink ease .25s;
+}
+#simon > .buttons > div > div.blink {
+  opacity: 1;
+}
+
+#volume-label {
+  user-select: none;
+}
+
+#volume-label > i {
+  width: 2.4vmin;
+}
+
+@media (max-width: 500px) {
+  .display input[type="range"] {
+    visibility: hidden;
+  }
+  .display label {
+    padding-left: 7vmin;
+    padding-bottom: 5vmin;
+  }
+}

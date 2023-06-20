@@ -2,6 +2,7 @@ import {Controller} from "./lib/UI/Controller";
 import {SimonModel} from "./SimonModel";
 import {SoundEffect} from "./lib/Audio/SoundEffect";
 import {MonoSynth} from "./lib/Audio/MonoSynth";
+import {AudioEngine} from "./lib/Audio/AudioEngine";
 
 async function loadSound(context: AudioContext, url: string): Promise<{buffer: AudioBuffer, url: string}> {
     return new Promise((resolve, reject) => {
@@ -25,7 +26,6 @@ async function loadSound(context: AudioContext, url: string): Promise<{buffer: A
 export class SimonController extends Controller<SimonModel> {
     ir: AudioBuffer;
 
-
     constructor(model: SimonModel) {
         super(model);
         model.props.audio.init();
@@ -35,7 +35,86 @@ export class SimonController extends Controller<SimonModel> {
         });
     }
 
-    async init() {
+    init() {
+        this.testAudio();
+        this.initSoundbar();
+
+        const buttons = document.querySelector("#simon > .buttons") as HTMLElement;
+
+        buttons.addEventListener("click", evt => {
+            const target = evt.target as HTMLElement;
+            const id = target.getAttribute("id");
+            switch(id) {
+                case "red-button":
+                case "green-button":
+                case "blue-button":
+                case "yellow-button":
+                {
+                    const child = target.children[0];
+                    child.classList.remove("blink");
+                    child.classList.add("blink");
+                    target.classList.remove("blink");
+                    target.classList.add("blink");
+                } break;
+            }
+        });
+
+        buttons.addEventListener("animationend", evt => {
+            const target = evt.target as HTMLElement;
+            if (evt.animationName === "blink") {
+                target.classList.remove("blink");
+                target.children[0].classList.remove("blink");
+            }
+        })
+    }
+
+
+
+    initSoundbar() {
+        const volIcon = document.querySelector("#volume-label > i");
+        const volEl = this.model.props.volume;
+        let volume = 67; // TODO: use cookie to retrieve this val?
+
+        volEl.value = volume.toString();
+        setVolImage(volume, volIcon);
+        setMasterVolume(volume, this.model.props.audio);
+
+
+        function setVolImage(value: number, volIcon: Element) {
+            if (value === 0) {
+                volIcon.className = "fa-solid fa-volume-xmark";
+            } else if (value < 33) {
+                volIcon.className = "fa-solid fa-volume-off";
+            } else if (value < 66) {
+                volIcon.className = "fa-solid fa-volume-low";
+            } else {
+                volIcon.className = "fa-solid fa-volume-high";
+            }
+        }
+
+        function setMasterVolume(value: number, audio: AudioEngine) {
+            audio.busses.master.postGain.gain.value = value * .01;
+        }
+
+        volEl.addEventListener("input", evt => {
+            const value = Number(volEl.value);
+            volume = value;
+            setVolImage(value, volIcon);
+            setMasterVolume(value, this.model.props.audio);
+        });
+
+        volIcon.addEventListener("click", evt => {
+            evt.stopPropagation();
+
+            const tempVolume = (Number(volEl.value) === 0) ? volume : 0;
+
+            setVolImage(tempVolume, volIcon);
+            setMasterVolume(tempVolume, this.model.props.audio);
+            volEl.value = tempVolume.toString();
+        });
+    }
+
+    async testAudio() {
         const m = this.model;
         const audio = m.props.audio;
 

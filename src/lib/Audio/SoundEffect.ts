@@ -1,6 +1,6 @@
 // Class intended for short one-shot sound effects.
 // If you need longer audio with more controls for music or ambience, please use the `Music` class.
-import { Delegate } from "../UI/Delegate";
+import { Delegate } from "../Delegate";
 import { loadAudioBuffer } from "./Loading";
 import { Sound } from "./Sound";
 

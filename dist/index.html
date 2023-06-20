@@ -7,20 +7,28 @@
 
     <!--  Font Awesome  -->
     <script src="https://kit.fontawesome.com/a8d80231ea.js" crossorigin="anonymous"></script>
+
+    <!--  Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <!--  Style Sheet  -->
     <link rel="stylesheet" href="./css/styles.css" />
 </head>
 <body>
     <div id="simon">
         <div class="buttons">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
+            <div id="red-button"><div></div></div>
+            <div id="green-button"><div></div></div>
+            <div id="blue-button"><div></div></div>
+            <div id="yellow-button"><div></div></div>
         </div>
 
         <div class="display">
+            <h2>SIMON</h2>
 <!-- fa-volume-high, fa-volume-low, fa-volume-off -->
-            <label for="volume"><i class="fa-solid fa-volume-high"></i>
+            <label id="volume-label" for="volume"><i class="fa-solid fa-volume-high"></i>
                 <input id="volume" type="range" />
             </label>
         </div>
