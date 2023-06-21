@@ -1,3 +1,7 @@
+:root {
+  --main-font: 'Press Start 2P', cursive;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -94,7 +98,7 @@ body {
 }
 
 .display > h2 {
-  font-family: 'Press Start 2P', cursive;
+  font-family: var(--main-font);
   text-align: center;
   font-size: 2vmin;
 
@@ -113,7 +117,7 @@ body {
 /* ===== Play-again button ================================================= */
 
 #play-again {
-  font-family: 'Press Start 2P', cursive;
+  font-family: var(--main-font);
   border-radius: 5px;
   border: 2px solid black;
 
@@ -315,4 +319,19 @@ body {
     padding-left: 7vmin;
     padding-bottom: 5vmin;
   }
+}
+
+/* ===== Round display ===================================================== */
+#round-display {
+  font-family: var(--main-font);
+  text-align: center;
+}
+
+#round-display > p:nth-of-type(1) {
+  margin: 1.5vmin 0 0 0;
+}
+
+
+#round-display > p:nth-of-type(2) {
+  margin-top: 1vmin;
 }

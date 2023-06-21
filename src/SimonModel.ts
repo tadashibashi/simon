@@ -50,6 +50,7 @@ export interface SimonProps {
     order: Uint8Array;
     audio: AudioEngine; // audio engine
     playAgain: HTMLElement;
+    roundDisplay: HTMLElement;
 }
 
 
@@ -60,7 +61,8 @@ export class SimonModel extends Model<SimonProps, SimonState, Action> {
             playAgain: document.getElementById("play-again"),
             order: new Uint8Array(30),
             volume: document.querySelector("#volume"),
-            audio: new AudioEngine
+            audio: new AudioEngine,
+            roundDisplay: document.getElementById("round-display"),
         };
 
         super(props, stateDefault);
