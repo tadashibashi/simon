@@ -325,12 +325,13 @@ body {
 #round-display {
   font-family: var(--main-font);
   text-align: center;
+
+  font-size: 1.5vmin;
 }
 
 #round-display > p:nth-of-type(1) {
   margin: 1.5vmin 0 0 0;
 }
-
 
 #round-display > p:nth-of-type(2) {
   margin-top: 1vmin;
