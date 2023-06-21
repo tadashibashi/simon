@@ -6,7 +6,11 @@
     "target": "ES5",
     "allowJs": true,
     "sourceMap": true,
-    "moduleResolution": "NodeNext"
+    "moduleResolution": "NodeNext",
+    "baseUrl": ".", // This must be specified if "paths" is.
+    "paths": {
+      "WebAA": ["lib/WebAA"] // This mapping is relative to "baseUrl"
+    }
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*.ts", "lib/**/*.ts"]
 }

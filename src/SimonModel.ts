@@ -1,5 +1,5 @@
 import { Model } from "./lib/UI/Model";
-import { AudioEngine } from "./lib/Audio";
+import { AudioEngine } from "WebAA";
 
 export enum GameState {
     // Play button with grayed-out screen.

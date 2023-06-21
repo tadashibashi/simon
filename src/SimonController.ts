@@ -1,4 +1,5 @@
-import {AudioEngine, MonoSynth, loadAudioBuffer} from "./lib/Audio";
+import {AudioEngine, MonoSynth, loadAudioBuffer} from "WebAA";
+
 import {Controller} from "./lib/UI/Controller";
 import {GameState, SimonModel} from "./SimonModel";
 

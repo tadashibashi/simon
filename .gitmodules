@@ -1,0 +1,3 @@
+[submodule "lib/WebAA"]
+	path = lib/WebAA
+	url = https://github.com/tadashibashi/WebAA.git
