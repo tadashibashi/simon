@@ -1,8 +1,6 @@
-import {AudioEngine} from "./lib/Audio/AudioEngine";
+import {AudioEngine, MonoSynth, loadAudioBuffer} from "./lib/Audio";
 import {Controller} from "./lib/UI/Controller";
 import {GameState, SimonModel} from "./SimonModel";
-import {MonoSynth} from "./lib/Audio/MonoSynth";
-import {loadAudioBuffer} from "./lib/Audio/Loading";
 
 export class SimonController extends Controller<SimonModel> {
     ir: AudioBuffer;
