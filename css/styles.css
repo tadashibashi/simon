@@ -1,0 +1,338 @@
+:root {
+  --main-font: 'Press Start 2P', cursive;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: #f3f3f3;
+  margin: 0;
+}
+
+/* ===== Overlay =========================================================== */
+
+#overlay {
+  position: fixed;
+  background: rgba(255, 255, 255, 0.35);
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+
+  transition: opacity ease 1s;
+  opacity: 1;
+
+  user-select: none;
+}
+
+#overlay.hide {
+  opacity: 0;
+}
+
+#overlay > .circle {
+  position: absolute;
+  width: 30vmin;
+  height: 30vmin;
+
+  top: 50%;
+  left: 50%;
+  transform:translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.77);
+  margin: auto;
+
+  z-index: 3;
+}
+
+#overlay > .circle > .play {
+  position: absolute;
+  width: 0;
+  height: 0;
+
+  border-left: 10vmin solid gray;
+  border-top: 5vmin solid transparent;
+  border-bottom: 5vmin solid transparent;
+
+  top: 50%;
+  left: 55%;
+  transform:translate(-50%, -50%);
+
+  background: rgba(255, 255, 255, 0.77);
+  margin: auto;
+
+  z-index: 3;
+}
+
+/* ===== Game board ======================================================== */
+
+#simon {
+  margin: 24vmin auto auto;
+  width: 50vmin;
+  height: 50vmin;
+  position: relative;
+
+  border: 1px solid #c2c1c1;
+  border-left: 4px solid #b9b9b9;
+  border-right: 4px solid #d5d5d5;
+  border-radius: 10vmin;
+  background: lightgray;
+
+  box-shadow: -20px 20px 20px 1px rgba(70, 70, 70, 0.45);
+}
+
+/* ===== Display =========================================================== */
+
+.display {
+  position: absolute;
+  top: 19vmin;
+  left: 17vmin;
+  width: 15vmin;
+  height: 12vmin;
+
+  color: #656565;
+}
+
+.display > h2 {
+  font-family: var(--main-font);
+  text-align: center;
+  font-size: 2vmin;
+
+  user-select: none;
+}
+
+.display > label {
+  font-size: 2vmin;
+  padding-left: 1vmin;
+}
+
+.display input[type="range"] {
+  width: 10vmin;
+}
+
+/* ===== Play-again button ================================================= */
+
+#play-again {
+  font-family: var(--main-font);
+  border-radius: 5px;
+  border: 2px solid black;
+
+  width: 28vmin;
+  height: 4vmin;
+  font-size: 2vmin;
+
+  text-align: center;
+  margin: 3vmin auto;
+  padding-top: .5vmin;
+
+  user-select: none;
+  opacity: 0;
+
+  transition: opacity 1s ease;
+  transition-delay: 0s;
+
+  box-shadow: -20px 20px 20px 1px rgba(70, 70, 70, 0.45);
+  text-shadow: -20px 20px 20px 1px rgba(70, 70, 70, 0.45);
+}
+
+.first-hide {
+  visibility: hidden;
+}
+
+#play-again.show {
+  opacity: 1;
+  transition: opacity 1s ease;
+  transition-delay: 1s;
+}
+
+/* ===== Buttons =========================================================== */
+
+#simon > .buttons > div {
+  position: absolute;
+  width: 10vmin;
+  height: 10vmin;
+}
+
+/* ===== Red button ======================================================== */
+
+#simon > .buttons > div:nth-of-type(1) {
+  top: 0;
+  left: 16vmin;
+  border-radius: 0 0 5vmin 5vmin;
+  border: 2px solid #cb2020;
+  width: 18vmin;
+  height: 15vmin;
+
+  background: linear-gradient(90deg, rgb(80, 32, 32, 70), rgba(255, 10, 10, 70));
+  transition: background .5s ease;
+}
+
+#simon > .buttons > div:nth-of-type(1).blink {
+  background: linear-gradient(90deg, rgb(255, 27, 27), rgb(239, 111, 111, 255));
+}
+
+#simon > .buttons > div:nth-of-type(1) > div {
+  border-radius: 0 0 5vmin 5vmin;
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+  box-shadow: 0 0 20px 20px #eca5b1;
+  transition: opacity ease-in-out .5s;
+}
+
+
+/* ===== Green button ===================================================== */
+
+#simon > .buttons > div:nth-of-type(2) {
+  top: 16vmin;
+  right: 0;
+  border-radius: 5vmin 0 0 5vmin;
+  border: 2px solid #20cb42;
+  width: 15vmin;
+  height: 18vmin;
+
+  background: linear-gradient(90deg, rgb(32, 80, 33), rgb(10, 255, 43));
+  transition: background .5s ease;
+}
+
+#simon > .buttons > div:nth-of-type(2).blink {
+  background: linear-gradient(90deg, rgb(27, 255, 31), rgb(111, 239, 117));
+}
+#simon > .buttons > div:nth-of-type(2) > div {
+  border-radius: 5vmin 0 0 5vmin;
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+  box-shadow: 0 0 20px 20px #a5ecae;
+  transition: opacity ease-in-out .5s;
+}
+
+/* ===== Blue button ======================================================= */
+
+#simon > .buttons > div:nth-of-type(3) {
+  bottom: 0;
+  left: 16vmin;
+  border-radius: 5vmin 5vmin 0 0;
+  border: 2px solid #2050cb;
+  width: 18vmin;
+  height: 15vmin;
+
+  background: linear-gradient(90deg, rgb(32, 43, 80), rgb(10, 67, 255));
+  transition: background .5s ease;
+}
+
+#simon > .buttons > div:nth-of-type(3).blink {
+  background: linear-gradient(90deg, rgb(27, 99, 255), rgb(111, 156, 239));
+}
+#simon > .buttons > div:nth-of-type(3) > div {
+  border-radius: 5vmin 5vmin 0 0;
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+  box-shadow: 0 0 20px 20px #a5bbec;
+  transition: opacity ease-in-out .5s;
+}
+
+/* ===== Yellow button ===================================================== */
+
+#simon > .buttons > div:nth-of-type(4) {
+  top: 16vmin;
+  left: 0;
+  border-radius: 0 5vmin 5vmin 0;
+  border: 2px solid #cb9b20;
+  width: 15vmin;
+  height: 18vmin;
+
+  background: linear-gradient(90deg, rgb(80, 63, 32), rgb(255, 157, 10));
+  transition: background .5s ease;
+}
+
+#simon > .buttons > div:nth-of-type(4).blink {
+  background: linear-gradient(90deg, rgb(255, 130, 27), rgb(239, 194, 111));
+}
+#simon > .buttons > div:nth-of-type(4) > div {
+  border-radius: 0 5vmin 5vmin 0;
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+  box-shadow: 0 0 20px 20px #ecd3a5;
+  transition: opacity ease-in-out .5s;
+}
+
+
+/* ===== Shadow div ======================================================= */
+
+#simon > .buttons > div > div {
+  pointer-events: none;
+  transition: background .3s;
+  z-index: 1;
+}
+
+#simon > .buttons > div > div.lose {
+  pointer-events: none;
+  background: rgba(0, 0, 0, 0.59);
+  box-shadow: none;
+  opacity: 1;
+}
+
+/* ===== Blink animation =================================================== */
+
+@keyframes blink {
+  0% {
+    transform: scale(.98);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+#simon > .buttons > div.blink {
+  animation: blink ease .25s;
+}
+#simon > .buttons > div > div.blink {
+  opacity: 1;
+}
+
+/* ===== Volume slider ===================================================== */
+
+#volume-label {
+  user-select: none;
+}
+
+#volume-label > i {
+  width: 2.4vmin;
+}
+
+@media (max-width: 500px) {
+  .display input[type="range"] {
+    visibility: hidden;
+  }
+  .display label {
+    padding-left: 7vmin;
+    padding-bottom: 5vmin;
+  }
+}
+
+/* ===== Round display ===================================================== */
+#round-display {
+  font-family: var(--main-font);
+  text-align: center;
+
+  font-size: 1.5vmin;
+}
+
+#round-display > p:nth-of-type(1) {
+  margin: 1.5vmin 0 0 0;
+}
+
+#round-display > p:nth-of-type(2) {
+  margin-top: 1vmin;
+}

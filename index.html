@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>SIMON</title>
+
+    <!--  Font Awesome  -->
+    <script src="https://kit.fontawesome.com/a8d80231ea.js" crossorigin="anonymous"></script>
+
+    <!--  Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <!--  Local stylesheet  -->
+    <link rel="stylesheet" href="./css/styles.css" />
+</head>
+<body>
+    <div id="overlay">
+        <div class="circle">
+            <div class="play"></div>
+        </div>
+    </div>
+
+    <!--  Simon game board  -->
+    <div id="simon">
+
+        <!-- Four main buttons -->
+        <div class="buttons">
+            <div id="red-button">
+                <!-- Inner divs used for performant fading box-shadows -->
+                <div></div>
+            </div>
+
+            <div id="green-button">
+                <div></div>
+            </div>
+
+            <div id="blue-button">
+                <div></div>
+            </div>
+
+            <div id="yellow-button">
+                <div></div>
+            </div>
+        </div>
+
+        <!-- Game name and volume control -->
+        <div class="display">
+            <h2>SIMON</h2>
+            <label id="volume-label" for="volume"><i class="fa-solid fa-volume-high"></i>
+                <input id="volume" type="range" />
+            </label>
+            <div id="round-display">
+                <p>ROUND</p>
+                <p id="round-number"></p>
+            </div>
+
+        </div>
+
+    </div> <!-- end Simon game board -->
+
+    <!-- Play again button -->
+    <div id="play-again" class="first-hide">Play Again?</div>
+
+    <!-- Local script bundle -->
+    <script src="main.js"></script>
+</body>
+</html>
