@@ -6,7 +6,7 @@ Re-creation of the classic Simon game, using HTML, Typescript, and CSS.
 
 A live build can be found [here](https://code.aaronishibashi.com/simon/).
 
-## Technologies Used
+## Tools
 
 ![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
